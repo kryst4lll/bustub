@@ -33,7 +33,7 @@ namespace bustub {
 enum class StringExpressionType { Lower, Upper };
 
 /**
- * StringExpression represents two expressions being computed.
+ * StringExpression 表示两个表达式正在计算。
  */
 class StringExpression : public AbstractExpression {
  public:
@@ -46,8 +46,18 @@ class StringExpression : public AbstractExpression {
   }
 
   auto Compute(const std::string &val) const -> std::string {
-    // TODO(student): implement upper / lower.
-    return {};
+    // TODO(student): 实现 upper / lower。
+    std::string result;
+    if (expr_type_ == StringExpressionType::Lower) {
+      // 将字符串转换为小写
+      std::transform(val.begin(), val.end(), std::back_inserter(result),
+                     [](unsigned char c) { return std::tolower(c); });
+    } else {
+      // 将字符串转换为大写
+      std::transform(val.begin(), val.end(), std::back_inserter(result),
+                     [](unsigned char c) { return std::toupper(c); });
+    }
+    return result;
   }
 
   auto Evaluate(const Tuple *tuple, const Schema &schema) const -> Value override {
@@ -63,7 +73,7 @@ class StringExpression : public AbstractExpression {
     return ValueFactory::GetVarcharValue(Compute(str));
   }
 
-  /** @return the string representation of the expression node and its children */
+  /** @return 表达式节点及其子节点的字符串表示 */
   auto ToString() const -> std::string override { return fmt::format("{}({})", expr_type_, *GetChildAt(0)); }
 
   BUSTUB_EXPR_CLONE_WITH_CHILDREN(StringExpression);

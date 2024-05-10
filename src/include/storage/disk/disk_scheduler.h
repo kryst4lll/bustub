@@ -22,32 +22,32 @@
 namespace bustub {
 
 /**
- * @brief Represents a Write or Read request for the DiskManager to execute.
+ * @brief 表示用于执行 DiskManager 写入或读取请求的请求。
  */
 struct DiskRequest {
   /** Flag indicating whether the request is a write or a read. */
   bool is_write_;
 
   /**
-   *  Pointer to the start of the memory location where a page is either:
-   *   1. being read into from disk (on a read).
-   *   2. being written out to disk (on a write).
+   *  指向内存位置起始的指针，其中一个页面正在：
+   *   1. 从磁盘读入（读取操作）。
+   *   2. 写入到磁盘（写入操作）。
    */
   char *data_;
 
-  /** ID of the page being read from / written to disk. */
+  /** 读取/写入磁盘的页面的 ID。 */
   page_id_t page_id_;
 
-  /** Callback used to signal to the request issuer when the request has been completed. */
+  /** 用于通知请求发起者请求已完成的回调。 */
   std::promise<bool> callback_;
 };
 
 /**
- * @brief The DiskScheduler schedules disk read and write operations.
+ * @brief DiskScheduler 负责调度磁盘读写操作。
  *
- * A request is scheduled by calling DiskScheduler::Schedule() with an appropriate DiskRequest object. The scheduler
- * maintains a background worker thread that processes the scheduled requests using the disk manager. The background
- * thread is created in the DiskScheduler constructor and joined in its destructor.
+ * 调度请求通过使用适当的 DiskRequest 对象调用
+ * DiskScheduler::Schedule()。调度程序维护一个后台工作线程，使用磁盘管理器处理已调度的请求。 后台线程在 DiskScheduler
+ * 构造函数中创建，并在其析构函数中加入。
  */
 class DiskScheduler {
  public:
@@ -55,41 +55,41 @@ class DiskScheduler {
   ~DiskScheduler();
 
   /**
-   * TODO(P1): Add implementation
+   * TODO(P1): 添加实现
    *
-   * @brief Schedules a request for the DiskManager to execute.
+   * @brief 调度一个请求，供 DiskManager 执行。
    *
-   * @param r The request to be scheduled.
+   * @param r 要调度的请求。
    */
   void Schedule(DiskRequest r);
 
   /**
-   * TODO(P1): Add implementation
+   * TODO(P1): 添加实现
    *
-   * @brief Background worker thread function that processes scheduled requests.
+   * @brief 后台工作线程函数，处理已调度的请求。
    *
-   * The background thread needs to process requests while the DiskScheduler exists, i.e., this function should not
-   * return until ~DiskScheduler() is called. At that point you need to make sure that the function does return.
+   * 后台线程需要在 DiskScheduler 存在时处理请求，即该函数在调用 ~DiskScheduler() 之前不应返回。
+   * 在那时，您需要确保函数确实返回。
    */
   void StartWorkerThread();
 
   using DiskSchedulerPromise = std::promise<bool>;
 
   /**
-   * @brief Create a Promise object. If you want to implement your own version of promise, you can change this function
-   * so that our test cases can use your promise implementation.
+   * @brief 创建一个 Promise 对象。如果您想实现自己版本的 promise，可以更改此函数，以便我们的测试用例可以使用您的
+   * promise 实现。
    *
    * @return std::promise<bool>
    */
   auto CreatePromise() -> DiskSchedulerPromise { return {}; };
 
  private:
-  /** Pointer to the disk manager. */
+  /** 指向磁盘管理器的指针。 */
   DiskManager *disk_manager_ __attribute__((__unused__));
-  /** A shared queue to concurrently schedule and process requests. When the DiskScheduler's destructor is called,
-   * `std::nullopt` is put into the queue to signal to the background thread to stop execution. */
+  /** 一个共享队列，用于并发调度和处理请求。当调用 DiskScheduler 的析构函数时，将 `std::nullopt`
+   * 放入队列中，以向后台线程发出停止执行的信号。 */
   Channel<std::optional<DiskRequest>> request_queue_;
-  /** The background thread responsible for issuing scheduled requests to the disk manager. */
+  /** 负责将已调度的请求发送给磁盘管理器的后台线程。 */
   std::optional<std::thread> background_thread_;
 };
 }  // namespace bustub

@@ -26,9 +26,22 @@ namespace bustub {
 // NOLINTNEXTLINE
 auto Planner::GetFuncCallFromFactory(const std::string &func_name, std::vector<AbstractExpressionRef> args)
     -> AbstractExpressionRef {
-  // 1. check if the parsed function name is "lower" or "upper".
-  // 2. verify the number of args (should be 1), refer to the test cases for when you should throw an `Exception`.
-  // 3. return a `StringExpression` std::shared_ptr.
+  // 1. 检查解析的函数名是否为 "lower" 或 "upper"。
+  // 2. 验证参数数量（应为 1），参考测试用例以确定何时抛出异常。
+  // 3. 返回一个 `StringExpression` 的 std::shared_ptr。
+  if (func_name == "lower" || func_name == "upper") {
+    // 验证参数数量
+    if (args.size() != 1) {
+      throw Exception(fmt::format("Function {} requires exactly one argument", func_name));
+    }
+
+    // 将函数名转换为 StringExpressionType
+    StringExpressionType expr_type = (func_name == "lower") ? StringExpressionType::Lower : StringExpressionType::Upper;
+    // 创建并返回一个 StringExpression
+    auto arg = args.front();
+    return std::make_shared<StringExpression>(arg, expr_type);
+  }
+
   throw Exception(fmt::format("func call {} not supported in planner yet", func_name));
 }
 

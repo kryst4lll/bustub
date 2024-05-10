@@ -47,6 +47,11 @@ class TableIterator {
 
   auto operator++() -> TableIterator &;
 
+  auto GetSTOP() -> RID{return stop_at_rid_;}
+  TableHeap * GetTH() {return table_heap_;}
+  void SetRID(RID rid){rid_ = rid;}
+  void SetSTOP(RID rid){stop_at_rid_ = rid;}
+  void SetTH(TableHeap *th){table_heap_ = th;}
  private:
   TableHeap *table_heap_;
   RID rid_;
